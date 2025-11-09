@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Based Personalized Conversational Agent</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(
+          135deg,
+          #1e3c72 0%,
+          #2a5298 50%,
+          #7e22ce 100%
+        );
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      .hero-section {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: white;
+        padding: 40px 20px;
+        position: relative;
+      }
+
+      .hero-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+            circle at 20% 50%,
+            rgba(139, 92, 246, 0.3) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 80%,
+            rgba(59, 130, 246, 0.3) 0%,
+            transparent 50%
+          );
+        pointer-events: none;
+      }
+
+      .content {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+      }
+
+      .logo {
+        font-size: 80px;
+        margin-bottom: 20px;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      h1 {
+        font-size: 3.5em;
+        margin-bottom: 20px;
+        font-weight: 700;
+        background: linear-gradient(to right, #fff, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .subtitle {
+        font-size: 1.5em;
+        margin-bottom: 40px;
+        opacity: 0.9;
+        font-weight: 300;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        margin: 60px 0;
+        padding: 0 20px;
+      }
+
+      .feature-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 30px;
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .feature-icon {
+        font-size: 50px;
+        margin-bottom: 15px;
+      }
+
+      .feature-title {
+        font-size: 1.3em;
+        margin-bottom: 10px;
+        font-weight: 600;
+      }
+
+      .feature-desc {
+        opacity: 0.8;
+        font-size: 0.95em;
+        line-height: 1.6;
+      }
+
+      .cta-button {
+        display: inline-block;
+        padding: 20px 50px;
+        font-size: 1.3em;
+        font-weight: bold;
+        color: white;
+        background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+        margin-top: 20px;
+      }
+
+      .cta-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 40px rgba(139, 92, 246, 0.6);
+      }
+
+      .stats {
+        display: flex;
+        justify-content: center;
+        gap: 60px;
+        margin-top: 60px;
+        flex-wrap: wrap;
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+
+      .stat-number {
+        font-size: 3em;
+        font-weight: bold;
+        background: linear-gradient(to right, #fbbf24, #f59e0b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .stat-label {
+        font-size: 1.1em;
+        opacity: 0.8;
+        margin-top: 5px;
+      }
+
+      .demo-preview {
+        margin-top: 60px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 40px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .demo-title {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+        color: #a78bfa;
+      }
+
+      .tech-stack {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-top: 30px;
+      }
+
+      .tech-badge {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 0.9em;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2.5em;
+        }
+        .subtitle {
+          font-size: 1.2em;
+        }
+        .logo {
+          font-size: 60px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hero-section">
+      <div class="content">
+        <div class="logo">🎓</div>
+        <h1>AI Based Personalized Conversational Agent</h1>
+        <p class="subtitle">
+          Revolutionizing Education with Personalized AI Learning
+        </p>
+
+        <div class="stats">
+          <div class="stat-item">
+            <div class="stat-number">6+</div>
+            <div class="stat-label">Lectures Analyzed</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">87%</div>
+            <div class="stat-label">Style Accuracy</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">Availability</div>
+          </div>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🎤</div>
+            <div class="feature-title">Voice Synthesis</div>
+            <div class="feature-desc">
+              Natural text-to-speech in teacher's style with Hinglish support
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">🧠</div>
+            <div class="feature-title">RAG Knowledge Base</div>
+            <div class="feature-desc">
+              Retrieval-augmented generation from analyzed lecture content
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <div class="feature-title">Teaching Style Clone</div>
+            <div class="feature-desc">
+              AI mimics Teacher's unique teaching methodology
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">🌐</div>
+            <div class="feature-title">Out-of-Scope Answers</div>
+            <div class="feature-desc">
+              Answers questions beyond lecture topics in same style
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-preview">
+          <div class="demo-title">🚀 Powered By</div>
+          <div class="tech-stack">
+            <span class="tech-badge">Google Gemini AI</span>
+            <span class="tech-badge">OpenAI Whisper</span>
+            <span class="tech-badge">ChromaDB Vector Store</span>
+            <span class="tech-badge">Google TTS</span>
+            <span class="tech-badge">LangChain RAG</span>
+            <span class="tech-badge">Flask Backend</span>
+          </div>
+        </div>
+
+        <a href="/chat" class="cta-button"> Start Learning Now → </a>
+      </div>
+    </div>
+  </body>
+</html>

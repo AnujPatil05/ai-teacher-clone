@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Teacher Voice - AI Clone</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(
+          135deg,
+          #1e3c72 0%,
+          #2a5298 50%,
+          #7e22ce 100%
+        );
+        color: white;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 20px;
+      }
+
+      .upload-container {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 40px;
+        max-width: 600px;
+        width: 100%;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        background: linear-gradient(to right, #fff, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      p {
+        font-size: 1.1em;
+        margin-bottom: 30px;
+        opacity: 0.9;
+      }
+
+      input[type="file"],
+      input[type="text"] {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        border: none;
+        font-size: 1em;
+      }
+
+      .upload-button {
+        padding: 15px 40px;
+        font-size: 1.2em;
+        font-weight: bold;
+        color: white;
+        background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+      }
+
+      .upload-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 40px rgba(139, 92, 246, 0.6);
+      }
+
+      .status {
+        margin-top: 20px;
+        font-size: 1em;
+        color: #fbbf24;
+      }
+
+      .back-link {
+        display: block;
+        margin-top: 30px;
+        color: #a78bfa;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .back-link:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="upload-container">
+      <h1>Upload Your Teaching Voice</h1>
+      <p>Submit a video or audio file to help clone your teaching style.</p>
+      <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="video" accept="audio/*,video/*" required />
+        <input
+          type="text"
+          name="label"
+          placeholder="Subject or label (optional)"
+        />
+        <button type="submit" class="upload-button">Upload</button>
+      </form>
+      {% if status %}
+      <div class="status">{{ status }}</div>
+      {% endif %}
+      <a href="/" class="back-link">← Back to Home</a>
+    </div>
+  </body>
+</html>

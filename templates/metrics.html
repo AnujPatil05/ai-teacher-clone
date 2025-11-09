@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Evaluation Metrics - AI Teacher Clone</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        min-height: 100vh;
+        padding: 40px 20px;
+        color: white;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+      }
+
+      .header p {
+        opacity: 0.8;
+        font-size: 1.1em;
+      }
+
+      .controls {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .run-btn {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 30px;
+        font-size: 1.1em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.3s;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+      }
+
+      .run-btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .run-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        padding: 20px;
+        font-size: 1.2em;
+      }
+
+      .loading.active {
+        display: block;
+      }
+
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+      }
+
+      .metric-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 30px;
+        text-align: center;
+        transition: transform 0.3s;
+      }
+
+      .metric-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .metric-icon {
+        font-size: 50px;
+        margin-bottom: 15px;
+      }
+
+      .metric-label {
+        font-size: 0.9em;
+        opacity: 0.8;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .metric-value {
+        font-size: 3em;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .metric-subtext {
+        font-size: 0.85em;
+        opacity: 0.7;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        margin-top: 15px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #8b5cf6, #3b82f6);
+        border-radius: 4px;
+        transition: width 0.5s ease;
+      }
+
+      .detailed-section {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 30px;
+        margin-top: 30px;
+      }
+
+      .detailed-section h2 {
+        margin-bottom: 20px;
+        font-size: 1.8em;
+      }
+
+      .score-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .score-row:last-child {
+        border-bottom: none;
+      }
+
+      .score-name {
+        font-size: 1.1em;
+      }
+
+      .score-value {
+        font-size: 1.3em;
+        font-weight: bold;
+        color: #a78bfa;
+      }
+
+      .chart-placeholder {
+        text-align: center;
+        padding: 40px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>📊 Evaluation Metrics</h1>
+        <p>AI Teacher Clone Performance Analysis</p>
+      </div>
+
+      <div class="controls">
+        <button class="run-btn" onclick="runEvaluation()" id="runBtn">
+          🧪 Run Evaluation Tests
+        </button>
+      </div>
+
+      <div class="loading" id="loading">
+        ⏳ Running evaluation tests... This may take 2-3 minutes...
+      </div>
+
+      <div id="metricsContainer" style="display: none">
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon">🎯</div>
+            <div class="metric-label">Overall Score</div>
+            <div class="metric-value" id="overallScore">--</div>
+            <div class="metric-subtext">Average across all metrics</div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="overallProgress"></div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon">✅</div>
+            <div class="metric-label">Accuracy</div>
+            <div class="metric-value" id="accuracy">--</div>
+            <div class="metric-subtext">Content correctness</div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="accuracyProgress"></div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon">📚</div>
+            <div class="metric-label">Completeness</div>
+            <div class="metric-value" id="completeness">--</div>
+            <div class="metric-subtext">Topic coverage</div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="completenessProgress"></div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon">🎭</div>
+            <div class="metric-label">Teaching Style</div>
+            <div class="metric-value" id="teachingStyle">--</div>
+            <div class="metric-subtext">Style matching</div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="styleProgress"></div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon">💡</div>
+            <div class="metric-label">Clarity</div>
+            <div class="metric-value" id="clarity">--</div>
+            <div class="metric-subtext">Explanation quality</div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="clarityProgress"></div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon">⚡</div>
+            <div class="metric-label">Response Time</div>
+            <div class="metric-value" id="responseTime">--</div>
+            <div class="metric-subtext">Average latency</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon">🔍</div>
+            <div class="metric-label">RAG Success</div>
+            <div class="metric-value" id="ragSuccess">--</div>
+            <div class="metric-subtext">Context retrieval rate</div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="ragProgress"></div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon">🎉</div>
+            <div class="metric-label">Engagement</div>
+            <div class="metric-value" id="engagement">--</div>
+            <div class="metric-subtext">Student engagement</div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="engagementProgress"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="detailed-section">
+          <h2>📈 Detailed Breakdown</h2>
+          <div class="score-row">
+            <span class="score-name">Accuracy Score</span>
+            <span class="score-value" id="accuracyDetail">--/10</span>
+          </div>
+          <div class="score-row">
+            <span class="score-name">Completeness Score</span>
+            <span class="score-value" id="completenessDetail">--/10</span>
+          </div>
+          <div class="score-row">
+            <span class="score-name">Teaching Style Score</span>
+            <span class="score-value" id="styleDetail">--/10</span>
+          </div>
+          <div class="score-row">
+            <span class="score-name">Clarity Score</span>
+            <span class="score-value" id="clarityDetail">--/10</span>
+          </div>
+          <div class="score-row">
+            <span class="score-name">Engagement Score</span>
+            <span class="score-value" id="engagementDetail">--/10</span>
+          </div>
+          <div class="score-row">
+            <span class="score-name">Total Tests Executed</span>
+            <span class="score-value" id="totalTests">--</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      async function runEvaluation() {
+        const runBtn = document.getElementById("runBtn");
+        const loading = document.getElementById("loading");
+        const container = document.getElementById("metricsContainer");
+
+        runBtn.disabled = true;
+        loading.classList.add("active");
+        container.style.display = "none";
+
+        try {
+          const response = await fetch("/run_evaluation", {
+            method: "POST",
+          });
+
+          const metrics = await response.json();
+          displayMetrics(metrics);
+          container.style.display = "block";
+        } catch (error) {
+          alert("Error running evaluation: " + error);
+        } finally {
+          runBtn.disabled = false;
+          loading.classList.remove("active");
+        }
+      }
+
+      function displayMetrics(metrics) {
+        // Calculate overall score
+        const overall =
+          (metrics.avg_accuracy +
+            metrics.avg_completeness +
+            metrics.avg_teaching_style +
+            metrics.avg_clarity +
+            metrics.avg_engagement) /
+          5;
+
+        // Display main metrics
+        document.getElementById("overallScore").textContent =
+          overall.toFixed(1) + "/10";
+        document.getElementById("accuracy").textContent =
+          metrics.avg_accuracy.toFixed(1) + "/10";
+        document.getElementById("completeness").textContent =
+          metrics.avg_completeness.toFixed(1) + "/10";
+        document.getElementById("teachingStyle").textContent =
+          metrics.avg_teaching_style.toFixed(1) + "/10";
+        document.getElementById("clarity").textContent =
+          metrics.avg_clarity.toFixed(1) + "/10";
+        document.getElementById("engagement").textContent =
+          metrics.avg_engagement.toFixed(1) + "/10";
+        document.getElementById("responseTime").textContent =
+          metrics.avg_response_time.toFixed(2) + "s";
+        document.getElementById("ragSuccess").textContent =
+          metrics.rag_success_rate.toFixed(1) + "%";
+
+        // Update progress bars
+        document.getElementById("overallProgress").style.width =
+          overall * 10 + "%";
+        document.getElementById("accuracyProgress").style.width =
+          metrics.avg_accuracy * 10 + "%";
+        document.getElementById("completenessProgress").style.width =
+          metrics.avg_completeness * 10 + "%";
+        document.getElementById("styleProgress").style.width =
+          metrics.avg_teaching_style * 10 + "%";
+        document.getElementById("clarityProgress").style.width =
+          metrics.avg_clarity * 10 + "%";
+        document.getElementById("engagementProgress").style.width =
+          metrics.avg_engagement * 10 + "%";
+        document.getElementById("ragProgress").style.width =
+          metrics.rag_success_rate + "%";
+
+        // Update detailed section
+        document.getElementById("accuracyDetail").textContent =
+          metrics.avg_accuracy.toFixed(2) + "/10";
+        document.getElementById("completenessDetail").textContent =
+          metrics.avg_completeness.toFixed(2) + "/10";
+        document.getElementById("styleDetail").textContent =
+          metrics.avg_teaching_style.toFixed(2) + "/10";
+        document.getElementById("clarityDetail").textContent =
+          metrics.avg_clarity.toFixed(2) + "/10";
+        document.getElementById("engagementDetail").textContent =
+          metrics.avg_engagement.toFixed(2) + "/10";
+        document.getElementById("totalTests").textContent = metrics.total_tests;
+      }
+    </script>
+  </body>
+</html>

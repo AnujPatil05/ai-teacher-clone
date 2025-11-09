@@ -1,0 +1,16 @@
+.env 
+AI_Teacher_Clone_IEEE_Paper.tex
+AI_Teacher_Clone_IEEE_Paper.txt
+generate_paper.py
+/videos/*
+!/videos/ .gitkeep
+/venv/
+/transcripts/*
+!/transcripts/ .gitkeep
+/static/*
+!/static/. gitkeep
+/models/*
+!/models/ .gitkeep
+/chroma_db/
+!/chroma_db/ .gitkeep
+/__pycache__
